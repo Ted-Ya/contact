@@ -4,31 +4,48 @@
 
 void IntialCon(struct Contract* pcon) 
 {
-	memset(pcon->ps,0,sizeof(pcon->ps));
+	memset(pcon->ps,0,DEFAULT_CAPACTICY*sizeof(int));
 	pcon->size = 0;
+	pcon->capacity = DEFAULT_CAPACTICY;
 }
 
-void AddContacter(struct Contract* pcon)
+struct Contract* AddContacter(struct Contract* pcon)
 {
-	if (pcon->size == MAX_CON)
+	if ( pcon->size == pcon->capacity)
 	{
-		printf("Add faild,Contact has fulled");
+		pcon->capacity += 2;
+	    struct Contract* ptr = (struct Contract*)realloc(pcon, pcon->capacity * sizeof(struct Person));
+		if (ptr != NULL)
+		{
+			pcon = ptr;
+			printf("new space %d\n", pcon->capacity);
+		}
+		else
+		{
+			printf("%s\n", strerror(errno));
+			printf("Add faild,Contact has fulled\n");
+			return pcon;
+		}
+	
 	}
-	else
+	
+	if (pcon->size < pcon->capacity)
 	{
 		printf("add contacter name:>");
 		scanf("%s", pcon->ps[pcon->size].name);
 		printf("add contacter age:>");
 		scanf("%d", &(pcon->ps[pcon->size].age));
 		printf("add contacter sex:>");
-		scanf("%s",pcon->ps[pcon->size].sex);
+		scanf("%s", pcon->ps[pcon->size].sex);
 		printf("add contacter tele:>");
 		scanf("%s", pcon->ps[pcon->size].tele);
 		printf("add contacter addr:");
-		scanf("%s",pcon->ps[pcon->size].addr);
+		scanf("%s", pcon->ps[pcon->size].addr);
 
 		pcon->size++;
+		return pcon;
 	}
+	return pcon;
 }
 
 void ShowContact(const struct Contract* pcon)

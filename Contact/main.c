@@ -24,12 +24,15 @@ enum Options
 };
 
 
-
 int main()
 {
 	int input = 0;
-	struct Contract con;
-	IntialCon(&con);
+	struct Contract* con = malloc(sizeof(struct Contract) + DEFAULT_CAPACTICY*sizeof(struct Person));
+	if (con == NULL)
+	{
+		return;
+	}
+	IntialCon(con);
 	do
 	{
 		manu();
@@ -38,22 +41,22 @@ int main()
 		switch (input)
 		{
 		case ADD:
-			AddContacter(&con);
-			break;
+		    con = AddContacter(con);
+			break;  
 		case DELETE:
-			DeleteContacter(&con);
+			DeleteContacter(con);
 			break;
 		case MODIFY:
-			ModifyContacter(&con);
+			ModifyContacter(con);
 			break;
 		case SEARCH:
-			SearchContacter(&con);
+			SearchContacter(con);
 			break;
 		case SHOW:
-			ShowContact(&con);
+			ShowContact(con);
 			break;
 		case SORT:
-			SortContact(&con);
+			SortContact(con);
 			break;
 		case EXIT:
 			printf("exit\n");
@@ -64,5 +67,7 @@ int main()
 		}
 
 	} while (input);
+	free(con);
+	con = NULL;
 	return 0;
 }
