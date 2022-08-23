@@ -32,7 +32,7 @@ int main()
 	{
 		return;
 	}
-	IntialCon(con);
+	con = IntialCon(con);
 	do
 	{
 		manu();
@@ -59,6 +59,7 @@ int main()
 			SortContact(con);
 			break;
 		case EXIT:
+			SaveContract(con);
 			printf("exit\n");
 			break;
 		default:

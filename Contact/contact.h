@@ -29,7 +29,7 @@ struct Contract
 };
 
 
-void IntialCon(struct Contract* pcon);
+struct Contract* IntialCon(struct Contract* pcon);
 
 struct Contract* AddContacter(struct Contract* pcon);
 
@@ -43,3 +43,5 @@ void DeleteContacter(struct Contract* pcon);
 void ModifyContacter(struct Contract* pcon);
 
 void SortContact(struct Contract* pcon);
+
+void SaveContract(struct Contract* pcon);

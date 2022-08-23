@@ -2,19 +2,62 @@
 #include<string.h>
 #include<assert.h>
 
-void IntialCon(struct Contract* pcon) 
+struct Contract* CheckCapacity(struct Contract* pcon);
+
+struct Contract* LoadInitalData(struct Contract* pcon)
+{
+	FILE* pfread = fopen("contract.dat", "rb");
+	if (pfread == NULL)
+	{
+		printf("LoadInitalData::%s\n", strerror(errno));
+		return pcon;
+	}
+	struct Person temp = { 0 };
+	while (fread(&temp,sizeof(struct Person),1,pfread))
+	{
+	  pcon =CheckCapacity(pcon);
+	  if (pcon->size <pcon->capacity)
+	  {
+		  pcon->ps[pcon->size] = temp;
+		  pcon->size++;
+	  }
+	}
+	fclose(pfread);
+	pfread = NULL;
+	return pcon;
+}
+
+struct Contract* IntialCon(struct Contract* pcon)
 {
 	memset(pcon->ps,0,DEFAULT_CAPACTICY*sizeof(int));
 	pcon->size = 0;
 	pcon->capacity = DEFAULT_CAPACTICY;
+	pcon = LoadInitalData(pcon);
 }
 
-struct Contract* AddContacter(struct Contract* pcon)
+void SaveContract(struct Contract* pcon)
 {
-	if ( pcon->size == pcon->capacity)
+	FILE* pf = fopen("contract.dat","wb");
+	if (pf == NULL)
+	{
+		printf("SaveContract::%s\n", strerror(errno));
+		return;
+	}
+	int i = 0;
+	for ( i = 0; i < pcon->size; i++)
+	{
+		fwrite(&(pcon->ps[i]), sizeof(struct Person), 1, pf);
+	}
+	fclose(pf);
+	pf = NULL;
+}
+
+struct Contract* CheckCapacity(struct Contract* pcon)
+{
+	if (pcon->size == pcon->capacity)
 	{
 		pcon->capacity += 2;
-	    struct Contract* ptr = (struct Contract*)realloc(pcon, pcon->capacity * sizeof(struct Person));
+		struct Contract* ptr = (struct Contract*)realloc(pcon, pcon->capacity * sizeof(struct Person));
 		if (ptr != NULL)
 		{
 			pcon = ptr;
@@ -22,13 +65,22 @@ struct Contract* AddContacter(struct Contract* pcon)
 		}
 		else
 		{
-			printf("%s\n", strerror(errno));
+			printf("CheckCapacity::%s\n", strerror(errno));
 			printf("Add faild,Contact has fulled\n");
+			pcon->capacity -= 2;
 			return pcon;
 		}
+
+	};
+	return pcon;
+}
+
+
+
+struct Contract* AddContacter(struct Contract* pcon)
+{
 	
-	}
-	
+	pcon = CheckCapacity(pcon);
 	if (pcon->size < pcon->capacity)
 	{
 		printf("add contacter name:>");
